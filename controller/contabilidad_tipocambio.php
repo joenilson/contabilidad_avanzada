@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 require_model('divisa.php');
+require_model('tipocambio.php');
 /**
  * Description of contabilidad_tipocambio
  *
@@ -24,11 +25,13 @@ require_model('divisa.php');
  */
 class contabilidad_tipocambio extends fs_controller {
     public $divisa;
+    public $tipocambio;
     public function __construct() {
         parent::__construct(__CLASS__, 'Tipo de Cambio', 'contabilidad', FALSE, TRUE, TRUE);
     }
 
     protected function private_core() {
         $this->divisa = new divisa();
+        $this->tipocambio = new tipocambio();
     }
 }

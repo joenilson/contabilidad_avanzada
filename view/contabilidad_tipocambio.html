@@ -39,6 +39,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 <thead>
                     <th class="form-control">{$fsc->empresa->coddivisa}</th>
                     <th>
+                        <select class="form-control" name="tipocambio" required="">
+                            <option value="">Tipo Cambio</option>
+                            {loop="$fsc->tipocambio->activos()"}
+                                <option value="{$value->id}">{$value->descripcion}</option>
+                            {/loop}
+                        </select>
+                    </th>
+                    <th>
                         <div class="input-group">
                             <input class="form-control datepicker" type="text" name="fecha" placeholder="Fecha de TC" aria-describedby="calendar-addon">
                             <span class="input-group-addon" id="calendar-addon"><span class="glyphicon glyphicon-calendar"></span></span>

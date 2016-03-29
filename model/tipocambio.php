@@ -126,7 +126,7 @@ class tipocambio extends fs_model {
     }
 
     public function activos() {
-        $sql = "SELECT * FROM ".$this->table_name." WHERE activo = TRUE order by id";
+        $sql = "SELECT * FROM ".$this->table_name." WHERE estado = TRUE order by id";
         $data = $this->db->select($sql);
         if($data){
             $lista = array();
