@@ -1,0 +1,71 @@
+{include="header"}
+<!--
+Copyright (C) 2016 Joe Nilson <joenilson at gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-header">
+                <h1><span class="fa fa-money"></span>
+                    Tipos de Cambio
+                    <a href="{$fsc->url()}" class='btn btn-xs btn-default'>
+                        <span class="glyphicon glyphicon-refresh"></span>
+                    </a>
+                </h1>
+                <p class="help-block">
+                    <span class="fa fa-angle-right"></span>
+                    La divisa de la Empresa es: <b>{$fsc->empresa->coddivisa}</b>, ingrese los distintos tipos de cambio contra las demás divisas configuradas.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+        <form role="form" class="form" method="POST" action="{$fsc->url()}">
+            <table class="table-responsive">
+                <thead>
+                    <th class="form-control">{$fsc->empresa->coddivisa}</th>
+                    <th>
+                        <div class="input-group">
+                            <input class="form-control datepicker" type="text" name="fecha" placeholder="Fecha de TC" aria-describedby="calendar-addon">
+                            <span class="input-group-addon" id="calendar-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </th>
+                    <th>
+                        <select class="form-control" name="coddivisa" required="">
+                            <option value="">Moneda Destino</option>
+                            {loop="$fsc->divisa->all()"}
+                                {if="$fsc->empresa->coddivisa!=$value->coddivisa"}
+                                    <option value="{$value->coddivisa}">{$value->descripcion}</option>
+                                {/if}
+                            {/loop}
+                        </select>
+                    </th>
+                    <th>
+                        <input class="form-control" type="number" step="any" name="conversion">
+                    </th>
+                    <th>
+                        <button class="btn btn-sm btn-primary">
+                            <span class="glyphicon glyphicon-floppy-disk"></span>
+                        </button>
+                    </th>
+                </thead>
+            </table>
+        </form>
+        </div>
+    </div>
+</div>
+{include="footer"}
