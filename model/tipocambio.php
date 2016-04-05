@@ -55,7 +55,7 @@ class tipocambio extends fs_model {
    }
 
     protected function install() {
-        return "INSERT INTO co_tipocambio (descripcion, diaria, estado) VALUES ('Operativo',FALSE,TRUE), ('Presupuesto',FALSE,TRUE), ('Historico',FALSE,TRUE);";
+        return "INSERT INTO co_tipocambio (descripcion, diaria, estado) VALUES ('Venta',FALSE,TRUE), ('Compra',FALSE,TRUE), ('Presupuesto',FALSE,TRUE);";
     }
 
     public function exists() {

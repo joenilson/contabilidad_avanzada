@@ -61,19 +61,6 @@ class maestro_tipocambio extends fs_controller{
                     $this->new_error_msg("Ocurrio un error al grabar la informacion: ".$ex);
                 }
             }
-        }elseif(isset($type)){
-            $data = array(
-                array('codigo_cuenta'=>11111,'descripcion_cuenta'=>'Compras'),
-                array('codigo_cuenta'=>11113,'descripcion_cuenta'=>'Ventas'),
-                array('codigo_cuenta'=>22221,'descripcion_cuenta'=>'Pagos'),
-                array('codigo_cuenta'=>44441,'descripcion_cuenta'=>'Cobros'),
-                array('codigo_cuenta'=>55551,'descripcion_cuenta'=>'Caja'),
-                array('codigo_cuenta'=>66661,'descripcion_cuenta'=>'Bancos')
-            );
-            $data2 = array();
-            $this->template = false;
-            header('Content-Type: application/json');
-            echo json_encode($data);
         }
     }
 

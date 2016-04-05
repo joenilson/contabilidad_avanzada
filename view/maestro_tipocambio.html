@@ -15,7 +15,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<script src="plugins/contabilidad_avanzada/view/js/bootstrap3-typeahead.min.js" type="text/javascript"></script>
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -30,32 +29,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                     <span class="fa fa-angle-right"></span>
                     Existen varios tipos de cambio, los de uso contable u operativos, los de presupuestos y los historicos,
                     tipos de cambio de compra o de venta,
-                    por favor aqui active o desactive los que vaya a utilizar.
+                    por favor aqui active, desactive, cree o elimine los que vaya a utilizar.
                 </p>
                 <p class="help-block">
                     <span class="fa fa-angle-right"></span>
                     En esta pantalla puede configurar si un tipo de cambio debe ser Actualizado diariamente,
                     si no se debe actualizar diariamente el sistema buscará el ultimo valor almacenado.
                 </p>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <form class="form" role="form" action="{$fsc->url()}" method="POST">
-                        <label for="descripcion_cuenta">Cuenta contable de Diferencia por Tipo de Cambio <i>(opcional)</i></label>
-                        <div class="input-group input-sm col-sm-6">
-                            <span class="input-group-addon input-sm" id="codigo_cuenta"></span>
-                            <input type="text" autocomplete="off" data-provide="typeahead" class="form-control input-sm col-sm-3" id="descripcion_cuenta" placeholder="Elija una cuenta para las diferencias por tipo de cambio" name="codigo_cuenta" aria-describedby="codigo_cuenta">
-                            <span class="input-group-btn">
-                                <a class="btn btn-sm btn-danger" href="{$fsc->url()}&delete=codigo_cuenta" title="Eliminar">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </a>
-                                <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true; this.form.submit();" title="Guardar">
-                                    <span class="glyphicon glyphicon-floppy-disk"></span>
-                                </button>
-                            </span>
-                        </div>
-                    </form>
-                </div>
+                <p class="help-block">
+                    <span class="fa fa-angle-right"></span>
+                    Las cuentas especiales para diferencias de cambio por ganancia o perdida deben ser configuradas en las
+                    <a class="btn btn-xs btn-default" href="index.php?page=contabilidad_cuentas">
+                        <span class="glyphicon glyphicon-cog"></span>
+                        <span class="hidden-xs">&nbsp;Cuentas</span>
+                    </a>.
+                </p>
             </div>
             <div class="table-responsive">
                 <table class="table table-condensed">
@@ -141,19 +129,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
     </div>
 </div>
-<script>
-    $('#descripcion_cuenta').typeahead({
-        source: function (query, process) {
-            return $.get('{$fsc->url()}&type=busqueda&hint=' + query, function (data) {
-                return process(data);
-            }, 'json');
-        },
-        displayText: function (data) {
-            return '' + data.descripcion_cuenta + '';
-        },
-        afterSelect: function (data) {
-            $('#codigo_cuenta').html(data.codigo_cuenta);
-        }
-    });
-</script>
 {include="footer"}
