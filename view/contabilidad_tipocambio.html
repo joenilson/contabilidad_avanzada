@@ -35,11 +35,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <div class="row">
         <div class="col-sm-12">
         <form role="form" class="form" method="POST" action="{$fsc->url()}">
+            <input type="hidden" name="type" value="nuevo">
             <table class="table-responsive">
                 <thead>
                     <th class="form-control">{$fsc->empresa->coddivisa}</th>
                     <th>
-                        <select class="form-control" name="tipocambio" required="">
+                        <select class="form-control" name="idtipocambio" required="">
                             <option value="">Tipo Cambio</option>
                             {loop="$fsc->tipocambio->activos()"}
                                 <option value="{$value->id}">{$value->descripcion}</option>
@@ -63,10 +64,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                         </select>
                     </th>
                     <th>
-                        <input class="form-control" type="number" step="any" name="conversion">
+                        <input class="form-control" type="number" step="any" name="factor">
                     </th>
                     <th>
-                        <button class="btn btn-sm btn-primary">
+                        <button class="btn btn-sm btn-primary" id="b_guardar" type="submit">
                             <span class="glyphicon glyphicon-floppy-disk"></span>
                         </button>
                     </th>
@@ -75,5 +76,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </form>
         </div>
     </div>
+    {loop="$fsc->tipocambio->activos()"}
+    <div class="col-sm-3">
+        <h4>{$value->descripcion}</h4>
+        <table class="table-responsive">
+            <thead>
+                <tr>
+                    <th class="col-sm-1">Fecha</th>
+                    <th class="col-sm-1">Factor</th>
+                    <th class="col-sm-1">Moneda</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    {/loop}
 </div>
 {include="footer"}

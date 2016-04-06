@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : co_valorestipocambio.xml
+    Description:
+        Estructura de la tabla co_valorestipocambio.
+-->
+<tabla>
+    <columna>
+        <nombre>coddivisa</nombre>
+        <tipo>character varying(3)</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>factor</nombre>
+        <tipo>double precision</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>fecha</nombre>
+        <tipo>date</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <columna>
+        <nombre>idtipocambio</nombre>
+        <tipo>integer</tipo>
+        <nulo>NO</nulo>
+    </columna>
+    <restriccion>
+        <nombre>co_valorestipocambio_pkey</nombre>
+        <consulta>PRIMARY KEY (idtipocambio)</consulta>
+    </restriccion>
+</tabla>
