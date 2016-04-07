@@ -75,10 +75,12 @@ class valorestipocambio extends fs_model{
                 $this->var2str($this->factor).");";
             try {
                 $this->db->exec($sql);
-                return true;
+                $valor = true;
             } catch (Exception $ex) {
                 $this->new_error_msg("Ocurrio el siguiente error al guardar la información: ".$ex);
+                $valor = false;
             }
+            return $valor;
         }
     }
 
@@ -92,10 +94,12 @@ class valorestipocambio extends fs_model{
                 "coddivisa = ".$this->var2str($this->coddivisa).";";
         try {
             $this->db->exec($sql);
-            return true;
+            $valor = true;
         } catch (Exception $ex) {
             $this->new_error_msg("Ocurrio el siguiente error al actualizar la información: ".$ex);
+            $valor = false;
         }
+        return $valor;
     }
 
     public function delete() {
@@ -105,10 +109,12 @@ class valorestipocambio extends fs_model{
                 "coddivisa = ".$this->var2str($this->coddivisa).";";
         try{
             $this->db->exec($sql);
-            return true;
+            $valor = true;
         } catch (Exception $ex) {
             $this->new_error_msg("Ocurrio el siguiente error al eliminar la información: ".$ex);
+            $valor = false;
         }
+        return $valor;
     }
 
     public function all($offset = 0){

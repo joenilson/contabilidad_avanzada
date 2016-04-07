@@ -92,22 +92,26 @@ class tipocambio extends fs_model {
                     $this->var2str($this->estado).");";
             try {
                 $this->db->exec($sql);
-                return true;
+                $valor = true;
             } catch (Exception $ex) {
                 $this->new_error_msg("Error al guardar la información del tipo de cambio: ".$ex);
+                $valor = false;
             }
+            return $valor;
         }
     }
 
     public function delete() {
         $sql = "DELETE FROM ".$this->table_name
               ." WHERE id = ".$this->intval($this->id).";";
-            try {
-                $this->db->exec($sql);
-                return true;
-            } catch (Exception $ex) {
-                $this->new_error_msg("Error al eliminar la información del tipo de cambio: ".$ex);
-            }
+        try {
+            $this->db->exec($sql);
+            $valor = true;
+        } catch (Exception $ex) {
+            $this->new_error_msg("Error al eliminar la información del tipo de cambio: ".$ex);
+            $valor = false;
+        }
+        return $valor;
     }
 
     public function all() {

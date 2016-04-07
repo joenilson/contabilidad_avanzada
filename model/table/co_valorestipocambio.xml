@@ -27,6 +27,6 @@
     </columna>
     <restriccion>
         <nombre>co_valorestipocambio_pkey</nombre>
-        <consulta>PRIMARY KEY (idtipocambio)</consulta>
+        <consulta>PRIMARY KEY (idtipocambio,coddivisa,fecha)</consulta>
     </restriccion>
 </tabla>
