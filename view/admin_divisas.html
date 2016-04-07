@@ -80,7 +80,9 @@
                                 <div class="input-group-addon input-sm">Al 02-04-2016:</div>
                                 <input class="form-control input-sm text-right" type="text" name="tasaconv" value="{$value->tasaconv}" autocomplete="off"/>
                                 <span class="input-group-btn">
-                                    <button class="form-control input-sm btn btn-default" title="Agregar tasa de conversión"><span class="glyphicon glyphicon-plus"></span></button>
+                                    <button class="form-control input-sm btn btn-default" type="button" title="Agregar tasa de conversión" onclick="agregarTasa('{$value->coddivisa}','venta')">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
                                 </span>
                             </div>
                         </td>
@@ -89,7 +91,9 @@
                                 <div class="input-group-addon input-sm">Al 02-04-2016:</div>
                                 <input class="form-control input-sm text-right" type="text" name="tasaconv_compra" value="{$value->tasaconv_compra}" autocomplete="off"/>
                                 <span class="input-group-btn">
-                                    <button class="form-control input-sm btn btn-default" title="Agregar tasa de conversión"><span class="glyphicon glyphicon-plus"></span></button>
+                                    <button class="form-control input-sm btn btn-default" type="button" title="Agregar tasa de conversión" onclick="agregarTasa('{$value->coddivisa}','compra')">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                    </button>
                                 </span>
                             </div>
                         </td>
@@ -177,4 +181,57 @@
     {/if}
     {/loop}
 </div>
+<form action="{$fsc->url()}" data-toggle="validator" role="form" id="f_agregar_tasa" method="post" class="form">
+    <input type="hidden" name="agregar_tasa" value="TRUE"/>
+    <input type="hidden" name="coddivisa" value=""/>
+    <input type="hidden" name="tipo_conversion" value=""/>
+    <div class="modal fade" id="modal_agregar_tasa">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Agregar tasa de conversion</h4>
+                </div>
+                <div class="modal-body bg-warning">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                Divisa Empresa:
+                                <input class="form-control" type="text" readonly name="divisa" value="{$fsc->empresa->coddivisa}" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                Fecha de Tasa:
+                                <input class="form-control datepicker" type="text" name="fecha" value="" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                Tasa de conversión:
+                                <input type="number" class="form-control" step="any" name="tasa_conversion" min="0" id="tasa_conversion" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" data-disable="true" class="btn btn-sm btn-warning">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    function agregarTasa(divisa,tipo){
+        $('#tipo_conversion').val(tipo);
+        $('#coddivisa').val(divisa);
+        $('#modal_agregar_tasa').modal('show');
+    }
+
+    function guardarTasa(){
+        //Enviar modal
+    }
+</script>
 {include="footer"}
