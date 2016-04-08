@@ -22,21 +22,24 @@
  *
  * @author Joe Nilson <joenilson at gmail.com>
  */
-class valorestipocambio extends fs_model{
-    public $idtipocambio;
+class tasasconversion extends fs_model{
+    public $divisaemp;
+    public $tipo;
     public $coddivisa;
     public $fecha;
     public $factor;
 
     public function __construct($t = FALSE) {
-        parent::__construct('co_valorestipocambio','plugins/contabilidad_avanzada/');
+        parent::__construct('co_tasasconversion','plugins/contabilidad_avanzada/');
         if($t){
-            $this->id = $t['idtipocambio'];
+            $this->divisaemp = $t['divisaemp'];
+            $this->tipo = $t['tipo'];
             $this->coddivisa = $t['coddivisa'];
             $this->fecha = $t['fecha'];
             $this->factor = floatval($t['factor']);
         }else{
-            $this->idtipocambio = null;
+            $this->divisaemp = null;
+            $this->tipo = null;
             $this->coddivisa = null;
             $this->fecha = date('d-m-Y');
             $this->factor = 0;
@@ -44,7 +47,7 @@ class valorestipocambio extends fs_model{
     }
 
     public function url() {
-        return 'index.php?page=contabilidad_tipocambio';
+        return 'index.php?page=contabilidad_tasasconversion';
     }
 
     public function install() {
@@ -53,7 +56,8 @@ class valorestipocambio extends fs_model{
 
     public function exists() {
         $sql = "SELECT * from ".$this->table_name." where".
-                " idtipocambio = ".$this->intval($this->idtipocambio).
+                " divisaemp = ".$this->var2str($this->divisaemp).
+                " AND tipo = ".$this->var2str($this->tipo).
                 " AND fecha = ".$this->var2str($this->fecha).
                 " AND coddivisa = ".$this->var2str($this->coddivisa).";";
         $data = $this->db->select($sql);
@@ -65,19 +69,20 @@ class valorestipocambio extends fs_model{
     }
 
     public function save() {
+        $valor = false;
         if($this->exists()){
             $this->update();
         }else{
-            $sql = "INSERT INTO ".$this->table_name." (idtipocambio, coddivisa, fecha, factor) VALUES (".
-                $this->intval($this->idtipocambio).", ".
+            $sql = "INSERT INTO ".$this->table_name." (divisaemp, tipo, coddivisa, fecha, factor) VALUES (".
+                $this->var2str($this->divisaemp).", ".
+                $this->var2str($this->tipo).", ".
                 $this->var2str($this->coddivisa).", ".
                 $this->var2str($this->fecha).", ".
                 $this->var2str($this->factor).");";
-            try {
-                $this->db->exec($sql);
+            if($this->db->exec($sql)){
                 $valor = true;
-            } catch (Exception $ex) {
-                $this->new_error_msg("Ocurrio el siguiente error al guardar la información: ".$ex);
+            }else{
+                $this->new_error_msg("Ocurrio un error al guardar la información de la tasa de conversion");
                 $valor = false;
             }
             return $valor;
@@ -89,7 +94,8 @@ class valorestipocambio extends fs_model{
                 "fecha = ".$this->var2str($this->fecha).", ".
                 "factor = ".$this->var2str($this->factor)." ".
                 "WHERE ".
-                "idtipocambio = ".$this->intval($this->idtipocambio)." AND ".
+                "divisaemp = ".$this->var2str($this->divisaemp)." AND ".
+                "tipo = ".$this->var2str($this->tipo)." AND ".
                 "fecha = ".$this->var2str($this->fecha)." AND ".
                 "coddivisa = ".$this->var2str($this->coddivisa).";";
         try {
@@ -104,7 +110,8 @@ class valorestipocambio extends fs_model{
 
     public function delete() {
         $sql = "DELETE FROM ".$this->table_name." WHERE ".
-                "idtipocambio = ".$this->intval($this->idtipocambio)." AND ".
+                "divisaemp = ".$this->var2str($this->divisaemp)." AND ".
+                "tipo = ".$this->var2str($this->tipo)." AND ".
                 "fecha = ".$this->var2str($this->fecha)." AND ".
                 "coddivisa = ".$this->var2str($this->coddivisa).";";
         try{
@@ -118,12 +125,12 @@ class valorestipocambio extends fs_model{
     }
 
     public function all($offset = 0){
-        $sql = "SELECT * FROM ".$this->table_name." order by idtipocambio, fecha, coddivisa ";
+        $sql = "SELECT * FROM ".$this->table_name." order by tipo, fecha, coddivisa ";
         $data = $this->db->select_limit($sql,FS_ITEM_LIMIT,$offset);
         if($data){
             $lista = array();
             foreach($data as $linea){
-                $lista[] = new valorestipocambio($linea);
+                $lista[] = new tasasconversion($linea);
             }
             return $lista;
         }else{
@@ -131,18 +138,32 @@ class valorestipocambio extends fs_model{
         }
     }
 
-    public function get($idtipocambio, $fecha, $coddivisa){
+    public function get($divisaemp, $tipo, $fecha, $coddivisa){
         $sql = "SELECT * FROM ".$this->table_name." WHERE ".
-                "idtipocambio = ".$this->intval($idtipocambio)." AND ".
+                "divisaemp = ".$this->var2str($divisaemp)." AND ".
+                "tipo = ".$this->var2str($tipo)." AND ".
                 "fecha = ".$this->var2str($fecha)." AND ".
                 "coddivisa = ".$this->var2str($coddivisa).";";
-        $data = $this->db->exec($sql);
+        $data = $this->db->select($sql);
         if($data){
-            return new valorestipocambio($data[0]);
+            return new tasasconversion($data[0]);
         }else{
             return false;
         }
 
     }
 
+    public function ultima_tasa($divisaemp, $tipo, $coddivisa){
+        $sql = "SELECT * FROM ".$this->table_name." WHERE ".
+                "divisaemp = ".$this->var2str($divisaemp)." AND ".
+                "tipo = ".$this->var2str($tipo)." AND ".
+                "coddivisa = ".$this->var2str($coddivisa)." ORDER BY fecha DESC LIMIT 1;";
+        $data = $this->db->select($sql);
+        //var_dump($data);
+        if(($data)){
+            return new tasasconversion($data[0]);
+        }else{
+            return false;
+        }
+    }
 }

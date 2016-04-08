@@ -62,6 +62,7 @@
                         <th class="text-left" width="120">Código ISO</th>
                         <th class="text-left">Tasa de conversión (Ventas)</th>
                         <th class="text-left">Tasa de conversión (compras)</th>
+                        <th class="text-center">Historico <span class="glyphicon glyphicon-zoom-in"></span></th>
                         <th class="text-right" width="120">Acciones</th>
                     </tr>
                 </thead>
@@ -77,8 +78,13 @@
                         <td class="col-sm-1"><input class="form-control" type="text" name="codiso" value="{$value->codiso}" autocomplete="off"/></td>
                         <td class="col-sm-2">
                             <div class="input-group">
-                                <div class="input-group-addon input-sm">Al 02-04-2016:</div>
-                                <input class="form-control input-sm text-right" type="text" name="tasaconv" value="{$value->tasaconv}" autocomplete="off"/>
+                                {if="$fsc->tasasconversion->ultima_tasa($fsc->empresa->coddivisa,'venta',$value->coddivisa)"}
+                                <div class="input-group-addon input-sm">{$fsc->tasasconversion->ultima_tasa($fsc->empresa->coddivisa,'venta',$value->coddivisa)->fecha}</div>
+                                <input class="form-control input-sm text-right" type="text" name="tasaconv_venta" value="{$fsc->tasasconversion->ultima_tasa($fsc->empresa->coddivisa,'venta',$value->coddivisa)->factor}" autocomplete="off"/>
+                                {else}
+                                <div class="input-group-addon input-sm"></div>
+                                <input class="form-control input-sm text-right" type="text" name="tasaconv_venta" readonly value="" autocomplete="off"/>
+                                {/if}
                                 <span class="input-group-btn">
                                     <button class="form-control input-sm btn btn-default" type="button" title="Agregar tasa de conversión" onclick="agregarTasa('{$value->coddivisa}','Venta')">
                                         <span class="glyphicon glyphicon-plus"></span>
@@ -88,14 +94,24 @@
                         </td>
                         <td class="col-sm-2">
                             <div class="input-group">
-                                <div class="input-group-addon input-sm">Al 02-04-2016:</div>
-                                <input class="form-control input-sm text-right" type="text" name="tasaconv_compra" value="{$value->tasaconv_compra}" autocomplete="off"/>
+                                {if="$fsc->tasasconversion->ultima_tasa($fsc->empresa->coddivisa,'compra',$value->coddivisa)"}
+                                <div class="input-group-addon input-sm">{$fsc->tasasconversion->ultima_tasa($fsc->empresa->coddivisa,'compra',$value->coddivisa)->fecha}</div>
+                                <input class="form-control input-sm text-right" type="text" name="tasaconv_compra" value="{$fsc->tasasconversion->ultima_tasa($fsc->empresa->coddivisa,'compra',$value->coddivisa)->factor}" autocomplete="off"/>
+                                {else}
+                                <div class="input-group-addon input-sm"></div>
+                                <input class="form-control input-sm text-right" type="text" name="tasaconv_compra" readonly value="" autocomplete="off"/>
+                                {/if}
                                 <span class="input-group-btn">
                                     <button class="form-control input-sm btn btn-default" type="button" title="Agregar tasa de conversión" onclick="agregarTasa('{$value->coddivisa}','Compra')">
                                         <span class="glyphicon glyphicon-plus"></span>
                                     </button>
                                 </span>
                             </div>
+                        </td>
+                        <td class="col-sm-1">
+                            <button class="form-control btn btn-sm btn-default" type="button" onclick="verLista('{$value->coddivisa}')">
+                                Ver <span class="glyphicon glyphicon-list-alt"></span>
+                            </button>
                         </td>
                         <td class="col-sm-2 text-right">
                             <div class="btn-group">
@@ -183,7 +199,7 @@
 </div>
 <form action="{$fsc->url()}" data-toggle="validator" role="form" id="f_agregar_tasa" method="post" class="form">
     <input type="hidden" name="agregar_tasa" value="TRUE"/>
-    <input type="hidden" name="tipo_conversion" value=""/>
+    <input type="hidden" id="tipo_conversion" name="tipo_conversion" value=""/>
     <div class="modal fade" id="modal_agregar_tasa">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -196,7 +212,7 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 Divisa Empresa:
-                                <input class="form-control" type="text" readonly name="divisa" value="{$fsc->empresa->coddivisa}" autocomplete="off"/>
+                                <input class="form-control" type="text" readonly name="divisaemp" value="{$fsc->empresa->coddivisa}" autocomplete="off"/>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -208,7 +224,7 @@
                         <div class="col-sm-3">
                             <div class="form-group">
                                 Divisa Destino:
-                                <input class="form-control" type="text" readonly id="coddivisa" name="coddivisa" required autocomplete="off"/>
+                                <input class="form-control" type="text" readonly id="divisa" name="divisa" required autocomplete="off"/>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -221,7 +237,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="input-group-btn">
-                        <button type="reset" data-disable="true" class="btn btn-sm btn-alert">
+                        <button type="button" data-disable="true" id="t_cancelar" class="btn btn-sm btn-alert">
                             <span class="glyphicon glyphicon-cancel"></span> &nbsp; Cancelar
                         </button>
                         <button type="submit" data-disable="true" class="btn btn-sm btn-warning">
@@ -237,12 +253,19 @@
     function agregarTasa(divisa,tipo){
         $('#tipo_tasa_conversion').html(tipo);
         $('#tipo_conversion').val(tipo);
-        $('#coddivisa').val(divisa);
+        $('#divisa').val(divisa);
         $('#modal_agregar_tasa').modal('show');
     }
 
-    function guardarTasa(){
-        //Enviar modal
+    $('#t_cancelar').click(function(){
+        $('#tipo_tasa_conversion').html('');
+        $('#tipo_conversion').val('');
+        $('#divisa').val('');
+        $('#modal_agregar_tasa').modal('hide');
+    });
+
+    function verLista(divisa){
+        alert('Se mostrará el listado de tasas de la divisa: '+divisa);
     }
 </script>
 {include="footer"}

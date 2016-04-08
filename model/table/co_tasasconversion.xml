@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Document   : co_valorestipocambio.xml
+    Document   : co_tasasconversion.xml
     Description:
-        Estructura de la tabla co_valorestipocambio.
+        Estructura de la tabla co_tasasconversion.
 -->
 <tabla>
+    <columna>
+        <nombre>divisaemp</nombre>
+        <tipo>character varying(3)</tipo>
+        <nulo>NO</nulo>
+    </columna>
     <columna>
         <nombre>coddivisa</nombre>
         <tipo>character varying(3)</tipo>
@@ -21,12 +26,12 @@
         <nulo>NO</nulo>
     </columna>
     <columna>
-        <nombre>idtipocambio</nombre>
-        <tipo>integer</tipo>
+        <nombre>tipo</nombre>
+        <tipo>character varying(6)</tipo>
         <nulo>NO</nulo>
     </columna>
     <restriccion>
-        <nombre>co_valorestipocambio_pkey</nombre>
-        <consulta>PRIMARY KEY (idtipocambio,coddivisa,fecha)</consulta>
+        <nombre>co_tasasconversion_pkey</nombre>
+        <consulta>PRIMARY KEY (divisaemp,tipo,coddivisa,fecha)</consulta>
     </restriccion>
 </tabla>
