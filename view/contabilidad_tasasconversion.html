@@ -20,75 +20,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div class="col-sm-12">
             <div class="page-header">
                 <h2><span class="fa fa-money"></span>
-                    Tipos de Cambio
-                    <a href="{$fsc->url()}" class='btn btn-xs btn-default'>
+                    Historial de Tasas de Conversión
+                    <a href="{$fsc->url()}&divisaemp={$fsc->divisaempresa}&coddivisa={$fsc->divisadestino}" class='btn btn-xs btn-default'>
                         <span class="glyphicon glyphicon-refresh"></span>
+                    </a>
+                    <a href="index.php?page=admin_divisas" class='btn btn-xs btn-default'>
+                        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp; Volver a Divisas
                     </a>
                 </h2>
                 <p class="help-block">
                     <span class="fa fa-angle-right"></span>
-                    La divisa de la Empresa es: <b>{$fsc->empresa->coddivisa}</b>, ingrese los distintos tipos de cambio contra las demás divisas configuradas.
+                    La divisa actual de la Empresa es: <b>{$fsc->empresa->coddivisa}</b>.
                 </p>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-        <form role="form" class="form" method="POST" action="{$fsc->url()}">
-            <input type="hidden" name="type" value="nuevo">
-            <table class="table-responsive">
-                <thead>
-                    <th class="form-control">{$fsc->empresa->coddivisa}</th>
-                    <th>
-                        <select class="form-control" name="idtipocambio" required="">
-                            <option value="">Tipo Cambio</option>
-                            {loop="$fsc->tipocambio->activos()"}
-                                <option value="{$value->id}">{$value->descripcion}</option>
-                            {/loop}
-                        </select>
-                    </th>
-                    <th>
-                        <div class="input-group">
-                            <input class="form-control datepicker" type="text" name="fecha" placeholder="Fecha de TC" aria-describedby="calendar-addon">
-                            <span class="input-group-addon" id="calendar-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                        </div>
-                    </th>
-                    <th>
-                        <select class="form-control" name="coddivisa" required="">
-                            <option value="">Moneda Destino</option>
-                            {loop="$fsc->divisa->all()"}
-                                {if="$fsc->empresa->coddivisa!=$value->coddivisa"}
-                                    <option value="{$value->coddivisa}">{$value->descripcion}</option>
-                                {/if}
-                            {/loop}
-                        </select>
-                    </th>
-                    <th>
-                        <input class="form-control" type="number" step="any" name="factor">
-                    </th>
-                    <th>
-                        <button class="btn btn-sm btn-primary" id="b_guardar" type="submit">
-                            <span class="glyphicon glyphicon-floppy-disk"></span>
-                        </button>
-                    </th>
-                </thead>
-            </table>
-        </form>
-        </div>
-    </div>
-    {loop="$fsc->tipocambio->activos()"}
+
+
     <div class="col-sm-3">
-        <h4>{$value->descripcion}</h4>
-        <table class="table-responsive">
+        <table class="table table-responsive table-bordered">
             <thead>
                 <tr>
                     <th class="col-sm-1">Fecha</th>
                     <th class="col-sm-1">Factor</th>
-                    <th class="col-sm-1">Moneda</th>
+                    <th class="col-sm-1">Tipo</th>
                 </tr>
             </thead>
+
+            {loop="$fsc->listado"}
+            <tr class="{if="$value->tipo=='compra'"}active{else}warning{/if}">
+                    <td>{$value->fecha}</td>
+                    <td>{$value->factor}</td>
+                    <td>{$value->tipo|ucfirst}</td>
+                </tr>
+            {/loop}
         </table>
     </div>
-    {/loop}
 </div>
 {include="footer"}

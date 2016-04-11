@@ -138,6 +138,23 @@ class tasasconversion extends fs_model{
         }
     }
 
+    public function historial($divisaemp, $coddivisa, $offset = 0){
+        $sql = "SELECT * FROM ".$this->table_name.
+                " WHERE divisaemp = ".$this->var2str($divisaemp).
+                " AND coddivisa = ".$this->var2str($coddivisa).
+                " order by tipo, fecha, coddivisa ";
+        $data = $this->db->select_limit($sql,FS_ITEM_LIMIT,$offset);
+        if($data){
+            $lista = array();
+            foreach($data as $linea){
+                $lista[] = new tasasconversion($linea);
+            }
+            return $lista;
+        }else{
+            return false;
+        }
+    }
+
     public function get($divisaemp, $tipo, $fecha, $coddivisa){
         $sql = "SELECT * FROM ".$this->table_name." WHERE ".
                 "divisaemp = ".$this->var2str($divisaemp)." AND ".
