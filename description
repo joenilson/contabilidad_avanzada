@@ -1,16 +1,15 @@
-Plugin de FacturaScripts para manejo de Contabilidad Avanzada: Caja y Bancos / Tipos de Cambio y Centros de Costeo.<br />
+Plugin de FacturaScripts para manejo de Contabilidad Avanzada: Caja y Bancos / Tasas de conversion y Centros de Costeo.<br />
 Completados:<br />
 <ul>
-<li></li>
+<li>Maestro de Tasas de conversion</li>
+<li>Ingresos de Tasas de conversion para distintas divisas</li>
 </ul>
 TO-DO:<br />
 <ul>
 <li>Maestro de Caja y Bancos</li>
-<li>Maestro de Tipos de Cambio</li>
 <li>Mestro de Centros de Costeo</li>
 <li>Maestro de Divisiones de la empresa (Departamentos, Areas, Unidades Organizativas, como se llamen en cada pais)</li>
-<li>Movimientos de Caja y Bancos (Ingresos/Egresos)</li>
-<li>Ingresos de Tipos de Cambio para distintas divisas</li>
+<li>Movimientos de Caja y Bancos básico (Ingresos/Egresos)</li>
 <li>Asignación de Centros de Costeo a documentos de compra y/o a cuentas contables</li>
 <li>Cierre diario Caja y Bancos</li>
 <li>Gastos Menores asociados a centros de costo y cuentas contables</li>
