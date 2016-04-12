@@ -1,11 +1,11 @@
 # contabilidad_avanzada
 ##Plugin de contabilidad avanzada para FacturaScripts
 
-Plugin de FacturaScripts para manejo de Contabilidad Avanzada: Caja y Bancos / Tipos de Cambio y Centros de Costeo.
+Plugin de FacturaScripts para manejo de Contabilidad Avanzada: Caja y Bancos / Tasas de conversion y Centros de Costeo.
 
 ##Completados:
 - Maestro de Tasas de conversion
-- Ingresos de Tipos de Cambio para distintas divisas
+- Ingresos de Tasas de conversion para distintas divisas
 
 ##TO-DO:
 
