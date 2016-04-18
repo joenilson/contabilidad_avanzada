@@ -9,7 +9,6 @@ Plugin de FacturaScripts para manejo de Contabilidad Avanzada: Caja y Bancos / T
 - [x] Conversion de Tasas en documentos de compra y venta
 
 ##TO-DO:
-- [ ] Maestro de Retenciones (Renta e Impuestos)
 - [ ] Maestro de Caja y Bancos
 - [ ] Mestro de Centros de Costeo
 - [ ] Maestro de Divisiones de la empresa (Departamentos, Areas, Unidades Organizativas, como se llamen en cada pais)
@@ -17,4 +16,5 @@ Plugin de FacturaScripts para manejo de Contabilidad Avanzada: Caja y Bancos / T
 - [ ] Asignación de Centros de Costeo a documentos de compra y/o a cuentas contables
 - [ ] Cierre diario Caja y Bancos
 - [ ] Gastos Menores asociados a centros de costo y cuentas contables
+- [ ] Maestro de Retenciones (Renta e Impuestos)
 - [ ] Dashboard Financiero
