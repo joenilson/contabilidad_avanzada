@@ -3,9 +3,11 @@ Completados:<br />
 <ul>
 <li>Maestro de Tasas de conversion</li>
 <li>Ingresos de Tasas de conversion para distintas divisas</li>
+<li>Conversion de Tasas en documentos de compra y venta</li>
 </ul>
 TO-DO:<br />
 <ul>
+<li>Maestro de Retenciones (Renta e Impuestos)</li>
 <li>Maestro de Caja y Bancos</li>
 <li>Mestro de Centros de Costeo</li>
 <li>Maestro de Divisiones de la empresa (Departamentos, Areas, Unidades Organizativas, como se llamen en cada pais)</li>
