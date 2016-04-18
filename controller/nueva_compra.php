@@ -387,6 +387,9 @@ class nueva_compra extends fs_controller
          $continuar = FALSE;
       }
 
+      //Validamos si hay que aplicar una tasa de conversion
+      $tasaconv = ($divisa->coddivisa != $this->empresa->coddivisa)?$_POST['tasaconv']:1;
+
       $pedido = new pedido_proveedor();
 
       if( $this->duplicated_petition($_POST['petition_id']) )
@@ -409,13 +412,7 @@ class nueva_compra extends fs_controller
          $pedido->codserie = $serie->codserie;
          $pedido->codpago = $forma_pago->codpago;
          $pedido->coddivisa = $divisa->coddivisa;
-         $pedido->tasaconv = $divisa->tasaconv_compra;
-
-         if($_POST['tasaconv'] != '')
-         {
-            $pedido->tasaconv = floatval($_POST['tasaconv']);
-         }
-
+         $pedido->tasaconv = floatval($tasaconv);
          $pedido->codagente = $this->agente->codagente;
          $pedido->numproveedor = $_POST['numproveedor'];
          $pedido->observaciones = $_POST['observaciones'];
@@ -467,21 +464,22 @@ class nueva_compra extends fs_controller
                      {
                         if( isset($_POST['costemedio']) )
                         {
+                           $conversion = ($tasaconv == 1)?1:$tasaconv;
                            if($articulo->costemedio == 0)
                            {
-                              $articulo->costemedio = $linea->pvptotal/$linea->cantidad;
+                              $articulo->costemedio = ($linea->pvptotal*$conversion)/$linea->cantidad;
                            }
                            else
                            {
                               $articulo->costemedio = $articulo->get_costemedio();
                               if($articulo->costemedio == 0)
                               {
-                                 $articulo->costemedio = $linea->pvptotal/$linea->cantidad;
+                                 $articulo->costemedio = ($linea->pvptotal*$conversion)/$linea->cantidad;
                               }
                            }
 
                            $articulo->save();
-                           $this->actualizar_precio_proveedor($pedido->codproveedor, $linea);
+                           $this->actualizar_precio_proveedor($pedido->codproveedor, $linea, $tasaconv);
                         }
                      }
 
@@ -598,6 +596,9 @@ class nueva_compra extends fs_controller
          $continuar = FALSE;
       }
 
+      //Validamos si hay que aplicar una tasa de conversion
+      $tasaconv = ($divisa->coddivisa != $this->empresa->coddivisa)?$_POST['tasaconv']:1;
+
       $albaran = new albaran_proveedor();
 
       if( $this->duplicated_petition($_POST['petition_id']) )
@@ -620,13 +621,7 @@ class nueva_compra extends fs_controller
          $albaran->codserie = $serie->codserie;
          $albaran->codpago = $forma_pago->codpago;
          $albaran->coddivisa = $divisa->coddivisa;
-         $albaran->tasaconv = $divisa->tasaconv_compra;
-
-         if($_POST['tasaconv'] != '')
-         {
-            $albaran->tasaconv = floatval($_POST['tasaconv']);
-         }
-
+         $albaran->tasaconv = floatval($tasaconv);
          $albaran->codagente = $this->agente->codagente;
          $albaran->numproveedor = $_POST['numproveedor'];
          $albaran->observaciones = $_POST['observaciones'];
@@ -807,6 +802,9 @@ class nueva_compra extends fs_controller
          $continuar = FALSE;
       }
 
+      //Validamos si hay que aplicar una tasa de conversion
+      $tasaconv = ($divisa->coddivisa != $this->empresa->coddivisa)?$_POST['tasaconv']:1;
+
       $factura = new factura_proveedor();
 
       if( $this->duplicated_petition($_POST['petition_id']) )
@@ -829,13 +827,7 @@ class nueva_compra extends fs_controller
          $factura->codalmacen = $almacen->codalmacen;
          $factura->codpago = $forma_pago->codpago;
          $factura->coddivisa = $divisa->coddivisa;
-         $factura->tasaconv = $divisa->tasaconv_compra;
-
-         if($_POST['tasaconv'] != '')
-         {
-            $factura->tasaconv = floatval($_POST['tasaconv']);
-         }
-
+         $factura->tasaconv = floatval($tasaconv);
          $factura->codagente = $this->agente->codagente;
          $factura->numproveedor = $_POST['numproveedor'];
          $factura->observaciones = $_POST['observaciones'];
@@ -1001,8 +993,10 @@ class nueva_compra extends fs_controller
       }
    }
 
-   private function actualizar_precio_proveedor($codproveedor, $linea)
+   //Agregada la tasa de conversión para que se actualice los precios del proveedor en la moneda de la empresa
+   private function actualizar_precio_proveedor($codproveedor, $linea, $tasaconv)
    {
+      $conversion = ($tasaconv == 1)?1:$tasaconv;
       if( !is_null($linea->referencia) )
       {
          $artp = $this->articulo_prov->get_by($linea->referencia, $codproveedor);
@@ -1016,7 +1010,7 @@ class nueva_compra extends fs_controller
             $artp->descripcion = $linea->descripcion;
          }
 
-         $artp->precio = $linea->pvpunitario;
+         $artp->precio = ($linea->pvpunitario*$conversion);
          $artp->dto = $linea->dtopor;
          $artp->save();
       }
@@ -1089,6 +1083,7 @@ class nueva_compra extends fs_controller
       return $artilist;
    }
 
+   //funcion para buscar la tasa de compra
    private function tasa_compra()
    {
       /// desactivamos la plantilla HTML
@@ -1099,9 +1094,14 @@ class nueva_compra extends fs_controller
       $date = filter_input(INPUT_GET, 'fecha');
       $fecha = date_format(date_create($date),'Y-m-d');
       $datos = $this->tasas->get($divisaemp, 'compra', $fecha, $coddivisa);
+      
       if(!$datos){
-          $datos = $this->tasas->ultima_tasa($divisaemp, 'compra', $coddivisa);
+         $datos = $this->tasas->ultima_tasa($divisaemp, 'compra', $coddivisa);
+         if(!$datos){
+            $datos = false;
+         }
       }
+
       $data['resultados'] = $datos;
       header('Content-Type: application/json');
       echo json_encode( $data );

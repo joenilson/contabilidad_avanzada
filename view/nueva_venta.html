@@ -10,11 +10,43 @@
    cliente = {function="json_encode($fsc->cliente_s)"};
    nueva_venta_url = '{$fsc->url()}';
    kiwimaru_url = '{#FS_COMMUNITY_URL#}/index.php?page=kiwimaru';
-   
+
    $(document).ready(function() {
       usar_serie();
       usar_almacen();
       recalcular();
+      $('#divisa').change(function(){
+        var divisa = $('#divisa').val();
+        var fecha = $('#fecha').val();
+        if(divisa !== '{$fsc->empresa->coddivisa}'){
+            $.ajax({
+                type: 'GET',
+                url: '{$fsc->url()}',
+                async: false,
+                data: 'tasa-venta=TRUE&coddivisa='+divisa+'&divisaemp={$fsc->empresa->coddivisa}&fecha='+fecha,
+                success : function(datos) {
+                    if(datos.resultados === false){
+                        bootbox.alert('¡No hay tasas de conversión para esta divisa, por favor revise el maestro de Divisas!', function() {
+                            document.f_new_albaran.divisa.focus();
+                            document.f_new_albaran.tasaconv.value = 1;
+                            $('#divisa').val('{$fsc->empresa->coddivisa}');
+                            $('#tasa_conversion').html('No hay tasa para divisa por defecto');
+                        });
+                    }else{
+                        document.f_new_albaran.tasaconv.value = datos.resultados.factor;
+                        $('#tasa_conversion').html('Tasa de conversión al '+datos.resultados.fecha+':');
+                    }
+                },
+                error: function() {
+                    bootbox.alert("Ocurrio un error no contemplado en el plugin, por favor envie un mensaje en la comunidad de FacturaScripts para verificar el problema, gracias.");
+                }
+            });
+        }else{
+            document.f_new_albaran.tasaconv.value = 1;
+            $('#divisa').val('{$fsc->empresa->coddivisa}');
+            $('#tasa_conversion').html('No hay tasa para divisa por defecto');
+        }
+      });
    });
 </script>
 
@@ -49,7 +81,7 @@
          <div class="col-sm-2">
             <div class="form-group">
                Fecha:
-               <input type="text" name="fecha" class="form-control datepicker" value="{$fsc->today()}" autocomplete="off"/>
+               <input type="text" id="fecha" name="fecha" class="form-control datepicker" value="{$fsc->today()}" autocomplete="off"/>
             </div>
          </div>
          <div class="col-sm-2">
@@ -60,7 +92,7 @@
          </div>
       </div>
    </div>
-   
+
    <div role="tabpanel">
       <ul class="nav nav-tabs" role="tablist">
          <li role="presentation" class="active">
@@ -107,7 +139,7 @@
                         <td colspan="2">
                            <div class="form-control text-right">Totales</div>
                         </td>
-                        <td>  
+                        <td>
                            <div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
                         </td>
                         <td>
@@ -172,16 +204,16 @@
                   <div class="col-sm-2">
                      <div class="form-group">
                         <a href="{$fsc->divisa->url()}">Divisa</a>:
-                        <select name="divisa" class="form-control">
+                        <select id="divisa" name="divisa" class="form-control">
                            {loop="$fsc->divisa->all()"}
                            <option value="{$value->coddivisa}"{if="$value->is_default()"} selected=""{/if}>{$value->descripcion}</option>
                            {/loop}
                         </select>
                      </div>
                   </div>
-                  <div class="col-sm-2">
+                  <div class="col-sm-3">
                      <div class="form-group">
-                        Tasa de conversión (1€ = X)
+                        <span id='tasa_conversion'>Tasa de conversión</span>
                         <input type="text" name="tasaconv" class="form-control" placeholder="(predeterminada)" autocomplete="off"/>
                      </div>
                   </div>
@@ -243,12 +275,14 @@
                   </div>
                   <div class="col-sm-6">
                      <div class="form-group">
-                        Dirección:
-                        {if="$fsc->direccion"}
-                        <input class="form-control" type="text" name="direccion" value="{$fsc->direccion->direccion}" autocomplete="off"/>
-                        {else}
-                        <input class="form-control" type="text" name="direccion" value="C/ " autocomplete="off"/>
-                        {/if}
+                        Dirección de entrega:
+                        <select class="form-control" name="direccion">
+                        {loop="$fsc->cliente_s->get_direcciones()"}
+                            {if="$value->domenvio"}
+                            <option value="{$value->id}">{$value->direccion}</option>
+                            {/if}
+                        {/loop}
+                        </select>
                      </div>
                   </div>
                </div>
@@ -256,7 +290,7 @@
          </div>
       </div>
    </div>
-   
+
    <div class="container-fluid" style="margin-top: 10px;">
       <div class="row">
          <div class="col-sm-6">
@@ -301,7 +335,7 @@
          </div>
       </div>
    </div>
-   
+
    <div class="modal fade" id="modal_guardar">
       <div class="modal-dialog">
          <div class="modal-content">
@@ -535,7 +569,7 @@
    $(document).ready(function() {
       $("#modal_cliente").modal('show');
       document.f_nueva_venta.ac_cliente.focus();
-      
+
       $("#ac_cliente").autocomplete({
          serviceUrl: '{$fsc->url()}',
          paramName: 'buscar_cliente',
