@@ -47,6 +47,31 @@
             $('#tasa_conversion').html('No hay tasa para divisa por defecto');
         }
       });
+       $('#direccion').change(function(){
+           var direccion = $('#direccion').val();
+           if(direccion !== '' & direccion !== undefined){
+                $.ajax({
+                    type: 'GET',
+                    url: '{$fsc->url()}',
+                    async: false,
+                    data: 'datos-direccion=TRUE&direccion='+direccion,
+                    success : function(datos) {
+                        if(datos.direccion !== false){
+                            document.f_new_albaran.provincia.value = datos.direccion.provincia;
+                            document.f_new_albaran.ciudad.value = datos.direccion.ciudad;
+                            document.f_new_albaran.codpostal.value = datos.direccion.codpostal;
+                            document.f_new_albaran.codpais.value = datos.direccion.codpais;
+                        }else{
+                            bootbox.alert("Revise la información de la dirección seleccionada ya que no es correcta.");
+                        }
+                    },
+                    error: function() {
+                        bootbox.alert("Ocurrio un error no contemplado en el plugin, por favor envie un mensaje en la comunidad de FacturaScripts para verificar el problema, gracias.");
+                    }
+                });
+            }
+
+       });
    });
 </script>
 
@@ -276,7 +301,7 @@
                   <div class="col-sm-6">
                      <div class="form-group">
                         Dirección de entrega:
-                        <select class="form-control" name="direccion">
+                        <select class="form-control" name="direccion" id="direccion">
                         {loop="$fsc->cliente_s->get_direcciones()"}
                             {if="$value->domenvio"}
                             <option value="{$value->id}">{$value->direccion}</option>

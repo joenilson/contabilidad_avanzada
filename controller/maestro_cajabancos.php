@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+require_model('almacen.php');
+require_model('cuentas.php');
 /**
  * Description of maestro_contabilidad
  *

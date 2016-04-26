@@ -1,0 +1,132 @@
+{include="header"}
+<!--
+Copyright (C) 2016 Joe Nilson <joenilson at gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<script type="text/javascript">
+   function actualizar_retencion()
+   {
+      document.f_nueva_retencion.proceso.value = 'actualizar';
+      $.ajax({
+         type: 'POST',
+         url: '{$fsc->url()}',
+         dataType: 'html',
+         data: $("form[name=f_nueva_retencion]").serialize(),
+         success: function(datos) {
+            $("#div_completar_retencion").hide();
+            $("#lineas_retencion").html(datos);
+         }
+      });
+   }
+
+   function guardar_retencion()
+   {
+      document.f_nueva_retencion.proceso.value = 'guardar';
+      document.f_nueva_retencion.submit();
+   }
+
+   $(document).ready(function() {
+      $("#b_nueva_retencion").click(function(event) {
+         event.preventDefault();
+         $("#modal_nueva_retencion").modal('show');
+      });
+   });
+</script>
+<div class="container">
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="page-header">
+            <h1>
+               Retenciones
+               <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
+                  <span class="glyphicon glyphicon-refresh"></span>
+               </a>
+               <div class="btn-group">
+                  <a id="b_nueva_retencion" class="btn btn-xs btn-success" href="#">
+                     <span class="glyphicon glyphicon-plus"></span> &nbsp; Nueva
+                  </a>
+
+               </div>
+            </h1>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-left">Ejercicio</th>
+                     <th class="text-left">Tipo de Retencion</th>
+                     <th class="text-left">Porcentaje</th>
+                     <th class="text-right">Estado</th>
+                  </tr>
+               </thead>
+
+               <tr class="warning">
+                  <td colspan="4">Sin resultados. Pulsa el botón <b>Nueva</b> para hacer una regularización de ITBIS.</td>
+               </tr>
+
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+
+<form class="form-horizontal" role="form" name="f_nueva_retencion" action="{$fsc->url()}" method="post">
+   <input type="hidden" name="proceso" value=""/>
+   <div class="modal fade" id="modal_nueva_retencion">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+               <h4 class="modal-title">Nueva Retencion</h4>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+                  <label for="ejercicio" class="col-lg-4 col-md-4 col-sm-4 control-label">Ejercicio</label>
+                  <div class="col-lg-8 col-md-8 col-sm-8">
+                      <select name="ejercicio" class="form-control">
+                         {loop="$fsc->ejercicios->all_abiertos()"}
+                         <option value="{$value->codejercicio}">{$value->nombre}</option>
+                         {/loop}
+                      </select>
+                   </div>
+               </div>
+               <div class="form-group">
+                  <label for="tipos" class="col-lg-4 col-md-4 col-sm-4 control-label">Tipo</label>
+                  <div id="tipos" class="col-lg-8 col-md-8 col-sm-8">
+                      <label class="radio-inline"><input type="radio" name="tipo" value="renta">Renta</label>
+                      <label class="radio-inline"><input type="radio" name="tipo" value="iva">{#FS_IVA#}</label>
+                  </div>
+               </div>
+               <div class="form-group">
+                  <label for="porcentaje" class="col-lg-4 col-md-4 col-sm-4 control-label">Porcentaje</label>
+                  <div class="col-lg-8 col-md-8 col-sm-8">
+                      <input class="form-control" type="number" step="any" name="porcentaje" required placeholder="% de Retencion" />
+                  </div>
+               </div>
+            </div>
+            <div id="div_completar_regiva" class="modal-footer">
+               <button class="btn btn-sm btn-default" type="button" onclick="guardar_retencion()">
+                   <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar
+                </button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+{include="footer"}

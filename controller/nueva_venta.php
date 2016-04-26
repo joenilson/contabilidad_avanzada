@@ -130,6 +130,10 @@ class nueva_venta extends fs_controller
       {
          $this->tasa_venta();
       }
+      else if( isset($_REQUEST['datos-direccion']) )
+      {
+         $this->datos_direccion();
+      }
       else if($this->query != '')
       {
          $this->new_search();
@@ -1402,6 +1406,19 @@ class nueva_venta extends fs_controller
       }
 
       $data['resultados'] = $datos;
+      header('Content-Type: application/json');
+      echo json_encode( $data );
+   }
+
+   //Funcion para actualizar los datos de la direccion
+   private function datos_direccion()
+   {
+      /// desactivamos la plantilla HTML
+      $this->template = FALSE;
+      $direccion = filter_input(INPUT_GET, 'direccion');
+      $data = array();
+      $datos = $this->dircliente->get($direccion);
+      $data['direccion'] = $datos;
       header('Content-Type: application/json');
       echo json_encode( $data );
    }
