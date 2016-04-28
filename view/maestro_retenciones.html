@@ -69,17 +69,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <table class="table table-hover">
                <thead>
                   <tr>
-                     <th class="text-left">Ejercicio</th>
+                     <th class="text-center">Ejercicio</th>
                      <th class="text-left">Tipo de Retencion</th>
+                     <th class="text-left">Descrición</th>
                      <th class="text-left">Porcentaje</th>
-                     <th class="text-right">Estado</th>
+                     <th class="text-center">Estado</th>
+                     <th class="text-center"></th>
                   </tr>
                </thead>
-
+               {if="$fsc->resultados"}
+               <tbody>
+                   {loop="$fsc->resultados"}
+                   <tr>
+                       <td class="text-center">{$value->codejercicio}</td>
+                       <td>Retención de {$value->tipo|ucfirst}</td>
+                       <td>{$value->descripcion}</td>
+                       <td class="text-right">{$value->porcentaje}%</td>
+                       <td class="text-center"><input type="checkbox" {if="$value->estado"}checked{/if} name="estado"></td>
+                       <td class="text-center"><button onClick="window.location.href='{$fsc->url()}&retencion={$value->id}'" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; Asignaciones</button></td>
+                   </tr>
+                   {/loop}
+               </tbody>
+               {else}
                <tr class="warning">
-                  <td colspan="4">Sin resultados. Pulsa el botón <b>Nueva</b> para hacer una regularización de ITBIS.</td>
+                  <td colspan="6">Sin resultados. Pulsa el botón <b>Nueva</b> para agregar una Retención.</td>
                </tr>
-
+               {/if}
             </table>
          </div>
       </div>
@@ -96,6 +111,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                <h4 class="modal-title">Nueva Retencion</h4>
             </div>
             <div class="modal-body">
+                <div class="form-group">
+                  <label for="porcentaje" class="col-lg-4 col-md-4 col-sm-4 control-label">Descripción</label>
+                  <div class="col-lg-8 col-md-8 col-sm-8">
+                      <input class="form-control" type="text" name="descripcion" required placeholder="Descripción de la retención"/>
+                  </div>
+               </div>
                <div class="form-group">
                   <label for="ejercicio" class="col-lg-4 col-md-4 col-sm-4 control-label">Ejercicio</label>
                   <div class="col-lg-8 col-md-8 col-sm-8">

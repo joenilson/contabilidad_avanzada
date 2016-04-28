@@ -1,0 +1,71 @@
+{include="header"}
+<!--
+Copyright (C) 2016 Joe Nilson <joenilson at gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<div class="container">
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="page-header">
+            <h1>
+               {$fsc->retencion->descripcion}
+               <a class="btn btn-xs btn-default" href="{$fsc->url()}&retencion={$fsc->retencion->id}" title="Recargar la página">
+                  <span class="glyphicon glyphicon-refresh"></span>
+               </a>
+               <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Regresar">
+                  <span class="glyphicon glyphicon-arrow-left"></span> &nbsp; Volver al listado
+               </a>
+            </h1>
+         </div>
+      </div>
+   </div>
+   <div class="row">
+      <div class="col-sm-12">
+         <div class="table-responsive">
+            <table class="table table-hover">
+               <thead>
+                  <tr>
+                     <th class="text-center">Ejercicio</th>
+                     <th class="text-left">Tipo de Retencion</th>
+                     <th class="text-left">Descrición</th>
+                     <th class="text-left">Porcentaje</th>
+                     <th class="text-center">Estado</th>
+                     <th class="text-center"></th>
+                  </tr>
+               </thead>
+               {if="$fsc->resultados"}
+               <tbody>
+                   {loop="$fsc->resultados"}
+                   <tr>
+                       <td class="text-center">{$value->codejercicio}</td>
+                       <td>Retención de {$value->tipo|ucfirst}</td>
+                       <td>{$value->descripcion}</td>
+                       <td class="text-right">{$value->porcentaje}%</td>
+                       <td class="text-center"><input type="checkbox" {if="$value->estado"}checked{/if} name="estado"></td>
+                       <td class="text-center"><button onClick="window.location.href='{$fsc->url()}&retencion={$value->id}'" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; Asignaciones</button></td>
+                   </tr>
+                   {/loop}
+               </tbody>
+               {else}
+               <tr class="warning">
+                  <td colspan="6">Sin resultados. Pulsa el botón <b>Nueva</b> para agregar una Retención.</td>
+               </tr>
+               {/if}
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+{include="footer"}

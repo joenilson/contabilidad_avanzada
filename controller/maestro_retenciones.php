@@ -25,6 +25,7 @@ require_model('retenciones.php');
  */
 class maestro_retenciones extends fs_controller{
     public $ejercicios;
+    public $retencion;
     public $retenciones;
     public function __construct() {
         parent::__construct(__CLASS__, 'Retenciones', 'contabilidad', FALSE, TRUE, FALSE);
@@ -43,6 +44,11 @@ class maestro_retenciones extends fs_controller{
             }
         }
 
+        if(isset($_REQUEST['retencion']) and !empty($_REQUEST['retencion'])){
+            $this->retencion = $this->retenciones->get($_REQUEST['retencion']);
+            $this->template = 'extension/detalle_retencion';
+        }
+
         $this->resultados = $this->retenciones->all();
     }
 
@@ -55,7 +61,23 @@ class maestro_retenciones extends fs_controller{
     }
 
     public function guardar_retenciones(){
-
+        $codejercicio = \filter_input(INPUT_POST, 'ejercicio');
+        $descripcion = \filter_input(INPUT_POST, 'descripcion');
+        $tipo = \filter_input(INPUT_POST, 'tipo');
+        $porcentaje = \filter_input(INPUT_POST, 'porcentaje');
+        $r0 = new retenciones();
+        $r0->codejercicio = $codejercicio;
+        $r0->descripcion = stripcslashes(trim($descripcion));
+        $r0->tipo = $tipo;
+        $r0->porcentaje = floatval($porcentaje);
+        $r0->usuario_creacion = $this->user->nick;
+        $r0->fecha_creacion = date('Y-m-d h:i:s');
+        $r0->estado = true;
+        if($r0->save()){
+            $this->new_message('Retención '.$r0->descripcion." guardada correctamente");
+        }else{
+            $this->new_error_msg('Ocurrió un error al guardar la retención, por favor verifique los datos e intente nuevamente.');
+        }
     }
 
     public function eliminar_retenciones(){

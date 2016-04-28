@@ -146,7 +146,7 @@ class retenciones extends fs_model{
     }
 
     public function all($offset = 0){
-        $sql = "SELECT * FROM ".$this->table_name." order by codejercicio DESC, tipo, ASC";
+        $sql = "SELECT * FROM ".$this->table_name." order by codejercicio DESC, tipo ASC";
         $data = $this->db->select_limit($sql,FS_ITEM_LIMIT,$offset);
         if($data){
             $lista = array();
@@ -160,7 +160,7 @@ class retenciones extends fs_model{
     }
 
     public function all_activos($offset = 0){
-        $sql = "SELECT * FROM ".$this->table_name." WHERE estado = TRUE order by codejercicio DESC, tipo, ASC";
+        $sql = "SELECT * FROM ".$this->table_name." WHERE estado = TRUE order by codejercicio DESC, tipo ASC";
         $data = $this->db->select_limit($sql,FS_ITEM_LIMIT,$offset);
         if($data){
             $lista = array();
@@ -174,7 +174,7 @@ class retenciones extends fs_model{
     }
 
     public function all_tipo($tipo, $offset = 0){
-        $sql = "SELECT * FROM ".$this->table_name." WHERE tipo=".$this->var2str($tipo)." order by codejercicio DESC, tipo, ASC";
+        $sql = "SELECT * FROM ".$this->table_name." WHERE tipo=".$this->var2str($tipo)." order by codejercicio DESC, tipo ASC";
         $data = $this->db->select_limit($sql,FS_ITEM_LIMIT,$offset);
         if($data){
             $lista = array();
@@ -188,7 +188,7 @@ class retenciones extends fs_model{
     }
 
     public function all_tipo_activos($tipo, $offset = 0){
-        $sql = "SELECT * FROM ".$this->table_name." WHERE tipo=".$this->var2str($tipo)." AND estado = true order by codejercicio DESC, tipo, ASC";
+        $sql = "SELECT * FROM ".$this->table_name." WHERE tipo=".$this->var2str($tipo)." AND estado = true order by codejercicio DESC, tipo ASC";
         $data = $this->db->select_limit($sql,FS_ITEM_LIMIT,$offset);
         if($data){
             $lista = array();
@@ -201,10 +201,9 @@ class retenciones extends fs_model{
         }
     }
 
-    public function get($id,$tipo){
+    public function get($id){
         $sql = "SELECT * FROM ".$this->table_name." WHERE ".
-                "id = ".$this->intval($id)." AND ".
-                "tipo = ".$this->var2str($tipo).";";
+                "id = ".$this->intval($id).";";
         $data = $this->db->select($sql);
         if($data){
             return new retenciones($data[0]);
