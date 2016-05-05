@@ -19,6 +19,7 @@
 var numlineas = 0;
 var fs_nf0 = 2;
 var all_impuestos = [];
+var all_retenciones = [];
 var all_series = [];
 var proveedor = false;
 var nueva_compra_url = '';
@@ -87,10 +88,16 @@ function recalcular()
    var l_dto = 0;
    var l_neto = 0;
    var l_iva = 0;
+   var l_retrenta = 0;
+   var l_retiva = 0;
+   var l_rettotal = 0;
    var l_irpf = 0;
    var l_recargo = 0;
    var neto = 0;
    var total_iva = 0;
+   var total_retrenta = 0;
+   var total_retiva = 0;
+   var total_rettotal = 0;
    var total_irpf = 0;
    var total_recargo = 0;
 
@@ -98,6 +105,16 @@ function recalcular()
    {
       if($("#linea_"+i).length > 0)
       {
+         var l_retencion = $("#retencion_"+i).val();
+         var ret_string = l_retencion.split('-');
+         console.log(ret_string[0]+' - '+ret_string[0]);
+         if(ret_string[1] === 'renta'){
+             l_retrenta = parseFloat(ret_string[0]);
+         }else if(ret_string[1] === 'iva'){
+             l_retiva = parseFloat(ret_string[0]);
+         }else if(ret_string[1] === 'total'){
+             l_rettotal = parseFloat(ret_string[0]);
+         }
          l_uds = parseFloat( $("#cantidad_"+i).val() );
          l_pvp = parseFloat( $("#pvp_"+i).val() );
          l_dto = parseFloat( $("#dto_"+i).val() );
@@ -129,17 +146,34 @@ function recalcular()
          total_iva += l_neto * l_iva/100;
          total_irpf += l_neto * l_irpf/100;
          total_recargo += l_neto * l_recargo/100;
-      }
+         //Calculamos las distintas retenciones
+         total_retrenta += l_neto * l_retrenta/100;
+         total_retiva += (l_neto * l_iva/100) * l_retiva/100;
+         total_rettotal += (l_neto+(l_neto * l_iva/100)) * l_rettotal/100;
+         /// adaptamos el alto del textarea al texto
+         var txt = $("textarea[name='desc_"+i+"']").val();
+         txt = txt.split(/\r*\n/);
+         if(txt.length > 1)
+         {
+            $("textarea[name='desc_"+i+"']").prop('rows', txt.length);
+        }
+     }
    }
 
    neto = fs_round(neto, fs_nf0);
    total_iva = fs_round(total_iva, fs_nf0);
    total_irpf = fs_round(total_irpf, fs_nf0);
    total_recargo = fs_round(total_recargo, fs_nf0);
+   total_retrenta = fs_round(total_retrenta, fs_nf0);
+   total_retiva = fs_round(total_retiva, fs_nf0);
+   total_rettotal = fs_round(total_rettotal, fs_nf0);
    $("#aneto").html( show_numero(neto) );
    $("#aiva").html( show_numero(total_iva) );
    $("#are").html( show_numero(total_recargo) );
    $("#airpf").html( show_numero(total_irpf) );
+   $("#retencion_renta").val( show_numero(total_retrenta) );
+   $("#retencion_iva").val( show_numero(total_retiva) );
+   $("#retencion_total").val( show_numero(total_rettotal) );
    $("#atotal").val( neto + total_iva - total_irpf + total_recargo );
 
    if(total_recargo == 0 && !tiene_recargo)
@@ -285,6 +319,14 @@ function ajustar_iva(num)
    recalcular();
 }
 
+function ajustar_retencion(num)
+{
+   if((proveedor.retencion) && $("#linea_"+num).length > 0)
+   {
+      recalcular();
+   }
+}
+
 function aux_all_impuestos(num,codimpuesto)
 {
    var iva = 0;
@@ -310,7 +352,7 @@ function aux_all_impuestos(num,codimpuesto)
    {
       if(iva == all_impuestos[i].iva)
       {
-         html += "<option value=\""+all_impuestos[i].iva+"\" selected=\"selected\">"+all_impuestos[i].descripcion+"</option>";
+         html += "<option value=\""+all_impuestos[i].iva+"\" selected=\"\">"+all_impuestos[i].descripcion+"</option>";
       }
       else
          html += "<option value=\""+all_impuestos[i].iva+"\">"+all_impuestos[i].descripcion+"</option>";
@@ -326,7 +368,22 @@ function aux_all_impuestos(num,codimpuesto)
    return html;
 }
 
-function add_articulo(ref,desc,pvp,dto,codimpuesto)
+function aux_all_retenciones(num,retencion)
+{
+   var html = "<td><select id=\"retencion_"+num+"\" class=\"form-control\" name=\"retencion_"+num+"\" onchange=\"ajustar_retencion('"+num+"')\">";
+   html += "<option value=\"\"></option>";
+   if((proveedor.retencion) && (retencion))
+   {
+      for(var i=0; i<all_retenciones.length; i++)
+      {
+          html += "<option value=\""+all_retenciones[i].porcentaje+'-'+all_retenciones[i].tipo+"\">"+all_retenciones[i].descripcion+"</option>";
+      }
+   }
+   html += "</select></td>";
+   return html;
+}
+
+function add_articulo(ref,desc,pvp,dto,codimpuesto,retencion)
 {
    desc = Base64.decode(desc);
    $("#lineas_albaran").append("<tr id=\"linea_"+numlineas+"\">\n\
@@ -345,6 +402,7 @@ function add_articulo(ref,desc,pvp,dto,codimpuesto)
       <td><input type=\"text\" class=\"form-control text-right\" id=\"neto_"+numlineas+"\" name=\"neto_"+numlineas+
          "\" onchange=\"ajustar_neto()\" onclick=\"this.select()\" autocomplete=\"off\"/></td>\n\
       "+aux_all_impuestos(numlineas,codimpuesto)+"\n\
+      "+aux_all_retenciones(numlineas,retencion)+"\n\
       <td><input type=\"text\" class=\"form-control text-right\" id=\"total_"+numlineas+"\" name=\"total_"+numlineas+
          "\" onchange=\"ajustar_total()\" onclick=\"this.select()\" autocomplete=\"off\"/></td></tr>");
    numlineas += 1;
@@ -359,6 +417,20 @@ function add_articulo(ref,desc,pvp,dto,codimpuesto)
 
    $("#desc_"+(numlineas-1)).select();
    return false;
+}
+
+function add_articulo_atributos(ref,desc,pvp,dto,codimpuesto)
+{
+   $.ajax({
+      type: 'POST',
+      url: nueva_compra_url,
+      dataType: 'html',
+      data: "referencia4combi="+ref+"&desc="+desc+"&pvp="+pvp+"&dto="+dto+"&codimpuesto="+codimpuesto,
+      success: function(datos) {
+         $("#nav_articulos").hide();
+         $("#search_results").html(datos);
+      }
+   });
 }
 
 function add_linea_libre()
@@ -488,6 +560,7 @@ function buscar_articulos()
             $.each(json, function(key, val) {
                var descripcion = Base64.encode(val.descripcion);
                var descripcion_visible = val.descripcion;
+               var retencion_txt = '';
                if(val.codfamilia)
                {
                   descripcion_visible += ' <span class="label label-default" title="Familia: '+val.codfamilia+'">'
@@ -518,18 +591,30 @@ function buscar_articulos()
                {
                   tr_aux = "<tr class=\"success\">";
                }
+               else if(val.retencion)
+               {
+                   tr_aux = "<tr class=\"info\">";
+                   retencion_txt = ' <i>(Genera retención)</i>';
+               }
 
                if(val.secompra)
                {
+                  var funcion = 'add_articulo';
+
+                  if(val.tipo == 'atributos')
+                  {
+                     funcion = 'add_articulo_atributos';
+                  }
+
                   items.push(tr_aux+"<td><a href=\"#\" onclick=\"get_precios('"+val.referencia+"')\" title=\"más detalles\">\n\
                      <span class=\"glyphicon glyphicon-eye-open\"></span></a>\n\
-                     &nbsp; <a href=\"#\" onclick=\"return add_articulo('"
-                          +val.referencia+"','"+descripcion+"','"+precio+"','"+val.dtopor+"','"+val.codimpuesto+"')\">"
-                          +val.referencia+'</a> '+descripcion_visible+"</td>\n\
-                     <td class=\"text-right\"><a href=\"#\" onclick=\"return add_articulo('"
+                     &nbsp; <a href=\"#\" onclick=\"return "+funcion+"('"
+                          +val.referencia+"','"+descripcion+"','"+precio+"','"+val.dtopor+"','"+val.codimpuesto+"','"+val.retencion+"')\">"
+                          +val.referencia+'</a> '+descripcion_visible+retencion_txt+"</td>\n\
+                     <td class=\"text-right\"><a href=\"#\" onclick=\"return "+funcion+"('"
                           +val.referencia+"','"+descripcion+"','"+val.coste+"','"+val.dtopor+"','"+val.codimpuesto+"')\">"
                           +show_precio(val.coste)+"</a></td>\n\
-                     <td class=\"text-right\"><a href=\"#\" onclick=\"return add_articulo('"
+                     <td class=\"text-right\"><a href=\"#\" onclick=\"return "+funcion+"('"
                           +val.referencia+"','"+descripcion+"','"+val.pvp+"','0','"+val.codimpuesto+"')\" title=\"actualizado el "
                           +val.factualizado+"\">"+show_precio(val.pvp)+"</a></td>\n\
                      <td class=\"text-right\">"+val.stockfis+"</td></tr>");

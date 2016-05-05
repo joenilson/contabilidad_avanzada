@@ -59,6 +59,7 @@ class nueva_venta extends fs_controller
    public $tipo;
    public $tasas;
    public $dircliente;
+
    public function __construct()
    {
       parent::__construct(__CLASS__, 'Nueva venta...', 'ventas', FALSE, FALSE, TRUE);
@@ -77,6 +78,7 @@ class nueva_venta extends fs_controller
       $this->pais = new pais();
       $this->tasas = new tasasconversion();
       $this->dircliente = new direccion_cliente();
+
       /// cargamos la configuración
       $fsvar = new fs_var();
       $this->nuevocli_setup = $fsvar->array_get(
@@ -996,12 +998,6 @@ class nueva_venta extends fs_controller
       else
       {
          $this->new_error_msg('Almacén no encontrado.');
-         $continuar = FALSE;
-      }
-
-      $direccion = $this->dircliente->get($_POST['direccion']);
-      if(!$direccion){
-         $this->new_error_msg('¡No eligió una dirección de envio válida!.');
          $continuar = FALSE;
       }
 

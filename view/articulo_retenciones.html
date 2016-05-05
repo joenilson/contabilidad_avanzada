@@ -44,63 +44,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       });
    });
 </script>
-<div class="container">
-   <div class="row">
-      <div class="col-sm-12">
-         <div class="page-header">
-            <h1>
-               Retenciones
-               <a class="btn btn-xs btn-default" href="{$fsc->url()}" title="Recargar la página">
-                  <span class="glyphicon glyphicon-refresh"></span>
-               </a>
-               <div class="btn-group">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel-title">
+                <h3>Retenciones para {$fsc->articulo->descripcion}
+                <a class="btn btn-xs btn-default" href="{$fsc->url()}&ref={$fsc->articulo->referencia}"><span class="glyphicon glyphicon-refresh"></span></a>
+                <a class="btn btn-xs btn-default" href="{$fsc->articulo->url()}"><span class="glyphicon glyphicon-arrow-left"></span> Volver</a>
+                <div class="btn-group">
                   <a id="b_nueva_retencion" class="btn btn-xs btn-success" href="#">
                      <span class="glyphicon glyphicon-plus"></span> &nbsp; Nueva
                   </a>
-
-               </div>
-            </h1>
-         </div>
-      </div>
-   </div>
-   <div class="row">
-      <div class="col-sm-12">
-         <div class="table-responsive">
-            <table class="table table-hover">
-               <thead>
-                  <tr>
-                     <th class="text-center">Ejercicio</th>
-                     <th class="text-left">Tipo de Retencion</th>
-                     <th class="text-left">Descrición</th>
-                     <th class="text-left">Porcentaje</th>
-                     <th class="text-center">Estado</th>
-                     <th class="text-center"></th>
-                  </tr>
-               </thead>
-               {if="$fsc->resultados"}
-               <tbody>
-                   {loop="$fsc->resultados"}
-                   <tr>
-                       <td class="text-center">{$value->codejercicio}</td>
-                       <td>Retención de {$value->tipo|ucfirst}</td>
-                       <td>{$value->descripcion}</td>
-                       <td class="text-right">{$value->porcentaje}%</td>
-                       <td class="text-center"><input type="checkbox" {if="$value->estado"}checked{/if} name="estado"></td>
-                       <td class="text-center"><button onClick="window.location.href='{$fsc->url()}&retencion={$value->id}'" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; Asignaciones</button></td>
-                   </tr>
-                   {/loop}
-               </tbody>
-               {else}
-               <tr class="warning">
-                  <td colspan="6">Sin resultados. Pulsa el botón <b>Nueva</b> para agregar una Retención.</td>
-               </tr>
-               {/if}
-            </table>
-         </div>
-      </div>
-   </div>
+                </div>
+                </h3>
+                <span class="help-block">Aqui puede indicar las combiaciones de retenciones si son a Renta o a {#FS_IVA#}, esto depende mucho de cada país.</span>
+                <hr/>
+            </div>
+        </div>
+    </div>
 </div>
-
 <form class="form-horizontal" role="form" name="f_nueva_retencion" action="{$fsc->url()}" method="post">
    <input type="hidden" name="proceso" value=""/>
    <div class="modal fade" id="modal_nueva_retencion">
@@ -109,30 +71,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <div class="modal-header">
                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                <h4 class="modal-title">Nueva Retencion</h4>
+               <span class="help-block">Puede elegir si la Retención es en la compra, la venta o en ambas</span>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                  <label for="porcentaje" class="col-lg-4 col-md-4 col-sm-4 control-label">Descripción</label>
-                  <div class="col-lg-8 col-md-8 col-sm-8">
-                      <input class="form-control" type="text" name="descripcion" required placeholder="Descripción de la retención"/>
-                  </div>
-               </div>
                <div class="form-group">
-                  <label for="ejercicio" class="col-lg-4 col-md-4 col-sm-4 control-label">Ejercicio</label>
+                  <label for="ejercicio" class="col-lg-4 col-md-4 col-sm-4 control-label">Retencion</label>
                   <div class="col-lg-8 col-md-8 col-sm-8">
                       <select name="ejercicio" class="form-control">
-                         {loop="$fsc->ejercicios->all_abiertos()"}
-                         <option value="{$value->codejercicio}">{$value->nombre}</option>
+                         {loop="$fsc->retenciones->all()"}
+                         <option value="{$value->id}">{$value->descripcion}</option>
                          {/loop}
                       </select>
                    </div>
                </div>
                <div class="form-group">
-                  <label for="tipos" class="col-lg-4 col-md-4 col-sm-4 control-label">Tipo</label>
+                  <label for="tipos" class="col-lg-4 col-md-4 col-sm-4 control-label">Afecta</label>
                   <div id="tipos" class="col-lg-8 col-md-8 col-sm-8">
-                      <label class="radio-inline"><input type="radio" name="tipo" value="renta">Renta</label>
-                      <label class="radio-inline"><input type="radio" name="tipo" value="iva">{#FS_IVA#}</label>
-                      <label class="radio-inline"><input type="radio" name="tipo" value="total">Total (Renta + {#FS_IVA#})</label>
+                      <label class="checkbox-inline"><input type="checkbox" name="compra" value="true">Compra</label>
+                      <label class="checkbox-inline"><input type="checkbox" name="venta" value="true">Venta</label>
                   </div>
                </div>
                <div class="form-group">

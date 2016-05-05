@@ -6,6 +6,7 @@
 <script type="text/javascript">
    fs_nf0 = {#FS_NF0#};
    all_impuestos = {function="json_encode($fsc->impuesto->all())"};
+   all_retenciones = {function="json_encode($fsc->retenciones->all())"};
    all_series = {function="json_encode($fsc->serie->all())"};
    proveedor = {function="json_encode($fsc->proveedor_s)"};
    nueva_compra_url = '{$fsc->url()}';
@@ -63,8 +64,12 @@
       <div class="row">
          <div class="col-sm-6">
             <h1 style="margin-top: 5px;">
+               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;
                <a href="{$fsc->proveedor_s->url()}">{$fsc->proveedor_s->nombre}</a>
             </h1>
+            {if="$fsc->proveedor_s->retencion"}
+            <p class="text-danger"><i class="fa fa-warning"></i> Este Proveedor generará retenciones</p>
+            {/if}
          </div>
          <div class="col-sm-2">
             <div class="form-group">
@@ -128,6 +133,7 @@
                         <th class="text-right" width="115">{#FS_IVA#}</th>
                         <th class="text-right recargo" width="115">RE %</th>
                         <th class="text-right irpf" width="115">{#FS_IRPF#} %</th>
+                        <th class="text-right retencion" width="115">Retención</th>
                         <th class="text-right" width="140">Total</th>
                      </tr>
                   </thead>
@@ -140,7 +146,7 @@
                               <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                            </a>
                         </td>
-                        <td colspan="3">
+                        <td colspan="2">
                            <div class="form-control text-right">Totales</div>
                         </td>
                         <td><div id="aneto" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div></td>
@@ -150,6 +156,9 @@
                         </td>
                         <td class="irpf">
                            <div id="airpf" class="form-control text-right" style="font-weight: bold;">{$fsc->show_numero(0)}</div>
+                        </td>
+                        <td>
+
                         </td>
                         <td>
                            <input type="text" name="atotal" id="atotal" class="form-control text-right" style="font-weight: bold;"
@@ -225,12 +234,31 @@
 
    <div class="container-fluid" style="margin-top: 10px;">
       <div class="row">
-         <div class="col-sm-6">
+         <div class="col-sm-3">
             <button class="btn btn-sm btn-default" type="button" onclick="window.location.href='{$fsc->url()}';">
                <span class="glyphicon glyphicon-refresh"></span> &nbsp; Reiniciar
             </button>
          </div>
-         <div class="col-sm-6 text-right">
+         <div class="col-sm-8 text-right">
+            {if="$fsc->proveedor_s->retencion"}
+            <div class="form-inline">
+                <span class="control-label"><b>Retenciones:</b></span>
+               <div class="form-group">
+                   <label class="control-label" for="retencion_renta">Renta</label>
+                   <input type="text" name="retencion_renta" style="width: 90px;" id="retencion_renta" class="form-control input-sm text-right" value="0" readonly autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                   <label class="control-label" for="retencion_iva">{#FS_IVA#}</label>
+                   <input type="text" name="retencion_iva" style="width: 90px;" id="retencion_iva" class="form-control input-sm text-right" value="0" readonly autocomplete="off"/>
+               </div>
+               <div class="form-group">
+                   <label class="control-label" for="retencion_iva">al Total</label>
+                   <input type="text" name="retencion_total" style="width: 90px;" id="retencion_total" class="form-control input-sm text-right" value="0" readonly autocomplete="off"/>
+               </div>
+            </div>
+            {/if}
+         </div>
+         <div class="col-sm-1 text-right">
             <button class="btn btn-sm btn-primary" type="button" onclick="$('#modal_guardar').modal('show');">
                <span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; Guardar...
             </button>
@@ -644,4 +672,5 @@
    </div>
 </div>
 {/if}
+
 {include="footer"}
