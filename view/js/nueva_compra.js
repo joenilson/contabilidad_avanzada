@@ -107,7 +107,6 @@ function recalcular()
       {
          var l_retencion = $("#retencion_"+i).val();
          var ret_string = l_retencion.split('-');
-         console.log(ret_string[0]+' - '+ret_string[0]);
          if(ret_string[1] === 'renta'){
              l_retrenta = parseFloat(ret_string[0]);
          }else if(ret_string[1] === 'iva'){
