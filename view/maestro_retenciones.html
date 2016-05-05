@@ -16,25 +16,18 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script type="text/javascript">
-   function actualizar_retencion()
-   {
-      document.f_nueva_retencion.proceso.value = 'actualizar';
-      $.ajax({
-         type: 'POST',
-         url: '{$fsc->url()}',
-         dataType: 'html',
-         data: $("form[name=f_nueva_retencion]").serialize(),
-         success: function(datos) {
-            $("#div_completar_retencion").hide();
-            $("#lineas_retencion").html(datos);
-         }
-      });
-   }
-
    function guardar_retencion()
    {
       document.f_nueva_retencion.proceso.value = 'guardar';
       document.f_nueva_retencion.submit();
+   }
+
+   function eliminar_retencion(id,desc)
+   {
+      if (confirm("¿Realmente desea eliminar la retencion " + desc + "?"))
+      {
+         window.location.href = '{$fsc->url()}&proceso=eliminar&id='+id;
+      }
    }
 
    $(document).ready(function() {
@@ -86,7 +79,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                        <td>{$value->descripcion}</td>
                        <td class="text-right">{$value->porcentaje}%</td>
                        <td class="text-center"><input type="checkbox" {if="$value->estado"}checked{/if} name="estado"></td>
-                       <td class="text-center"><button onClick="window.location.href='{$fsc->url()}&retencion={$value->id}'" class="btn btn-xs btn-default"><span class="glyphicon glyphicon-list-alt"></span>&nbsp; Asignaciones</button></td>
+                       <td class="text-center">
+                        {if="$fsc->allow_delete"}
+                            <a href="#" class="btn btn-sm btn-danger" title="Eliminar" onclick="eliminar_retencion('{$value->id}','{$value->descripcion}')">
+                               <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                        {/if}
+                        <button class="btn btn-sm btn-primary" type="submit" onclick="this.disabled = true;this.form.submit();" title="Guardar">
+                           <span class="glyphicon glyphicon-floppy-disk"></span>
+                        </button>
+                       </td>
                    </tr>
                    {/loop}
                </tbody>

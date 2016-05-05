@@ -24,6 +24,7 @@ require_model('retenciones.php');
  * @author Joe Nilson <joenilson at gmail.com>
  */
 class maestro_retenciones extends fs_controller{
+    public $allow_delete;
     public $ejercicios;
     public $retencion;
     public $retenciones;
@@ -34,7 +35,8 @@ class maestro_retenciones extends fs_controller{
     protected function private_core() {
         $this->ejercicios = new ejercicio();
         $this->retenciones = new retenciones();
-
+        /// ¿El usuario tiene permiso para eliminar en esta página?
+        $this->allow_delete = $this->user->allow_delete_on(__CLASS__);
         if(isset($_REQUEST['proceso']) AND !empty($_REQUEST['proceso'])){
             $proceso = trim($_REQUEST['proceso']);
             if($proceso == 'guardar'){
@@ -42,11 +44,6 @@ class maestro_retenciones extends fs_controller{
             }elseif($proceso == 'eliminar'){
                 $this->eliminar_retenciones();
             }
-        }
-
-        if(isset($_REQUEST['retencion']) and !empty($_REQUEST['retencion'])){
-            $this->retencion = $this->retenciones->get($_REQUEST['retencion']);
-            $this->template = 'extension/detalle_retencion';
         }
 
         $this->resultados = $this->retenciones->all();
@@ -81,6 +78,19 @@ class maestro_retenciones extends fs_controller{
     }
 
     public function eliminar_retenciones(){
-
+       $id = \filter_input(INPUT_GET, 'id');
+       $data = array();
+       $data['success']=false;
+       $data['mensaje']='No se pudo procesar la eliminación';
+       $ret0 = $this->retenciones->get($id);
+       if($ret0->delete()){
+           $data['success']=true;
+           $data['mensaje']='Retención eliminada';
+       }
+       if($data['success']){
+           $this->new_message($data['mensaje']);
+       }else{
+           $this->new_error_msg($data['mensaje']);
+       }
     }
 }

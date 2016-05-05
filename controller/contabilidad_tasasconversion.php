@@ -41,7 +41,6 @@ class contabilidad_tasasconversion extends fs_controller {
         $coddivisa = filter_input(INPUT_GET, 'coddivisa');
         if(isset($divisaemp) AND isset($coddivisa)){
             $this->listado = $this->tasasconversion->historial($divisaemp,$coddivisa);
-            //$this->listado_tasasconversion($historial);
             $this->divisaempresa = $divisaemp;
             $this->divisadestino = $coddivisa;
         }
